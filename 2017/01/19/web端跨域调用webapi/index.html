@@ -103,7 +103,7 @@
 <meta property="og:image" content="http://yoursite.com/2017/01/19/web端跨域调用webapi/9.png">
 <meta property="og:image" content="http://yoursite.com/2017/01/19/web端跨域调用webapi/10.png">
 <meta property="og:image" content="http://yoursite.com/2017/01/19/web端跨域调用webapi/11.png">
-<meta property="og:updated_time" content="2017-01-19T09:10:33.095Z">
+<meta property="og:updated_time" content="2017-01-19T09:15:20.603Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="web端跨域调用webapi">
 <meta name="twitter:description" content="在做Web开发中，常常会遇到跨域的问题，到目前为止，已经有非常多的跨域解决方案。通过自己的研究以及在网上看了一些大神的博客，写了一个Demo首先新建一个webapi的程序，如下图所示：由于微软已经给我们搭建好了webapi的环境，所以我们不必去添加引用一些dll，直接开始写代码吧。  
@@ -390,12 +390,12 @@ static List&lt; Employees&gt; emps;
 static EmployeesController()
 {
     emps = new List&lt; Employees&gt;();
-    emps.Add( new Employees { Id = 1, DepartmentId = 1, Name = &quot;张三&quot;, Gender = &quot;男&quot; , Job = &quot;ASP.NET工程师&quot; , PhoneNum = &quot;1886                       0922483&quot;, EmailAdderss = &quot;zhangsan@123.com&quot; , Address = &quot;江苏省苏州市独墅湖大道228号&quot; });
-    emps.Add( new Employees { Id = 2, DepartmentId = 2, Name = &quot;李四&quot;, Gender = &quot;女&quot; , Job = &quot;web前端工程师&quot; , PhoneNum = &quot;1886                       0922483&quot;, EmailAdderss = &quot;lisi@123.com&quot; , Address = &quot;江苏省苏州市独墅湖大道228号&quot; });
+    emps.Add( new Employees { Id = 1, DepartmentId = 1, Name = &quot;张三&quot;, Gender = &quot;男&quot; , Job = &quot;ASP.NET工程师&quot; , PhoneNum = &quot;18860922483&quot;, EmailAdderss = &quot;zhangsan@123.com&quot; , Address = &quot;江苏省苏州市独墅湖大道228号&quot; });
+    emps.Add( new Employees { Id = 2, DepartmentId = 2, Name = &quot;李四&quot;, Gender = &quot;女&quot; , Job = &quot;web前端工程师&quot; , PhoneNum = &quot;18860922483&quot;, EmailAdderss = &quot;lisi@123.com&quot; , Address = &quot;江苏省苏州市独墅湖大道228号&quot; });
 } 
 </code></pre><p>这段代码的作用就是往实体Employees类里存储数据。这里我只添加了两条数据仅供大家参考。  </p>
 <p>接下来我们要实现CRUD功能： </p>
-<pre><code>public IEnumerable &lt;Employees &gt; Get(int ? id = null )
+<pre><code>public IEnumerable &lt;Employees &gt; Get(int ? id = null)
 {
     return from employee in emps where employee.Id.Equals(id) || string.IsNullOrEmpty(Convert .ToString(id)) select employee;
 }
@@ -472,7 +472,6 @@ public IEnumerable&lt;Employees &gt; Get(int ? id = null )
 </code></pre><p>后端我采用的是HttpClient<br>具体用法如下：</p>
 <pre><code>private HttpClient client = new HttpClient ();
 private string url = &quot;http://192.168.13.7:8001/api/employees/get&quot; ;
-
 public async Task&lt; ActionResult&gt; Index()
 {
     ViewBag.Message = &quot;Modify this template to jump-start your ASP.NET MVC application.&quot;;
