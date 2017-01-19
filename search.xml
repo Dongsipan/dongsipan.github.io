@@ -3,6 +3,13 @@
   
     
     <entry>
+      <title><![CDATA['web端跨域调用webapi]]></title>
+      <url>%2F2017%2F01%2F19%2Fweb%E7%AB%AF%E8%B7%A8%E5%9F%9F%E8%B0%83%E7%94%A8webapi%2F</url>
+      <content type="text"><![CDATA[在做Web开发中，常常会遇到跨域的问题，到目前为止，已经有非常多的跨域解决方案。通过自己的研究以及在网上看了一些大神的博客，写了一个Demo首先新建一个webapi的程序，如下图所示：由于微软已经给我们搭建好了webapi的环境，所以我们不必去添加引用一些dll，直接开始写代码吧。 因为这只是做一个简单的Demo，并没有连接数据库。第一步我们要在Models文件夹里添加一个实体类Employees,用来存放数据。 Employees.cs里的内容如下： using System; using System.Collections.Generic; using System.Linq; using System.Web; namespace APIApplication.Models { public class Employees { public int? Id { get; set; } public int? DepartmentId { get; set; } public string Name { get; set; } public string Job { get; set; } public string Gender { get; set; } public string PhoneNum { get; set; } public string EmailAdderss { get; set; } public string Address { get; set; } } } 添加完实体类之后我们的重头戏即将开始，那就是controller接着我们在Controller文件夹下新建一个控制器，取名叫EmployeesController注意在添加控制器的时候要选择空API控制器模板如图所示：在控制器里我们要添加如下代码：在添加代码之前我们要添加引用：using APIApplication.Models;]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[Hello World]]></title>
       <url>%2F2017%2F01%2F19%2Fhello-world%2F</url>
       <content type="text"><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new "My New Post" More info: Writing Run server1$ hexo server More info: Server Generate static files1$ hexo generate More info: Generating Deploy to remote sites1$ hexo deploy More info: Deployment]]></content>
