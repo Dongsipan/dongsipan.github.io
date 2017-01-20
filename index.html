@@ -496,139 +496,14 @@
 
       
         
-          
-            <p>在做Web开发中，常常会遇到跨域的问题，到目前为止，已经有非常多的跨域解决方案。<br>通过自己的研究以及在网上看了一些大神的博客，写了一个Demo<br>首先新建一个webapi的程序，如下图所示：<br><img src="/2017/01/19/web端跨域调用webapi/1.png" alt="1"><br><img src="/2017/01/19/web端跨域调用webapi/2.png" alt="2"><br>由于微软已经给我们搭建好了webapi的环境，所以我们不必去添加引用一些dll，直接开始写代码吧。  </p>
-<p>因为这只是做一个简单的Demo，并没有连接数据库。<br>第一步我们要在Models文件夹里添加一个实体类Employees,用来存放数据。<br><img src="/2017/01/19/web端跨域调用webapi/3.png" alt="3">  </p>
-<p>Employees.cs里的内容如下：  </p>
-<pre><code>using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;  
-namespace APIApplication.Models
-{
-    public class Employees
-    {
-        public int? Id { get; set; }
-        public int? DepartmentId { get; set; }
-        public string Name { get; set; }
-        public string Job { get; set; }
-        public string Gender { get; set; }
-        public string PhoneNum { get; set; }
-        public string EmailAdderss { get; set; }
-        public string Address { get; set; }
-    }
-}
-</code></pre><p>添加完实体类之后我们的重头戏即将开始，那就是controller<br>接着我们在Controller文件夹下新建一个控制器，取名叫EmployeesController<br>注意在添加控制器的时候要选择空API控制器模板<br>如图所示：<br><img src="/2017/01/19/web端跨域调用webapi/4.png" alt="4"><br>在控制器里我们要添加如下代码：<br>在添加代码之前我们要添加引用：</p>
-<pre><code>using APIApplication.Models;   
-static List&lt; Employees&gt; emps;
-static EmployeesController()
-{
-    emps = new List&lt; Employees&gt;();
-    emps.Add( new Employees { Id = 1, DepartmentId = 1, Name = &quot;张三&quot;, Gender = &quot;男&quot; , Job = &quot;ASP.NET工程师&quot; , PhoneNum = &quot;18860922483&quot;, EmailAdderss = &quot;zhangsan@123.com&quot; , Address = &quot;江苏省苏州市独墅湖大道228号&quot; });
-    emps.Add( new Employees { Id = 2, DepartmentId = 2, Name = &quot;李四&quot;, Gender = &quot;女&quot; , Job = &quot;web前端工程师&quot; , PhoneNum = &quot;18860922483&quot;, EmailAdderss = &quot;lisi@123.com&quot; , Address = &quot;江苏省苏州市独墅湖大道228号&quot; });
-} 
-</code></pre><p>这段代码的作用就是往实体Employees类里存储数据。这里我只添加了两条数据仅供大家参考。  </p>
-<p>接下来我们要实现CRUD功能： </p>
-<pre><code>public IEnumerable &lt;Employees &gt; Get(int ? id = null)
-{
-    return from employee in emps where employee.Id.Equals(id) || string.IsNullOrEmpty(Convert .ToString(id)) select employee;
-}
-
-public void Post( Employees employee)
-{
-    employee.Id = 3;
-    emps.Add(employee);
-}
-
-public void Put( Employees employee)
-{
-    emps.Remove(emps.Where(e =&gt; e.Id == employee.Id).First());
-    emps.Add(employee);
-}
-
-public void Delete( int id)
-{
-    emps.Remove(emps.Where(e =&gt; e.Id == id).FirstOrDefault());
-}
-</code></pre><p>在这里Get是获取员工传入参数id是返回的就是对应id的数据，为空就是全部数据<br>Post是添加数据<br>Put是修改数据Put比较特殊，它在执行修改的时候是根据修改数据的ID去查找这条数据，然后删除掉，在添加新的数据。<br>Delete当然就是删除了。  </p>
-<p>接下来是见证奇迹的时刻。我们点击运行，在浏览器里输入localhost:<em>**</em>/api/employees<br>然后我们会看到一个XML的文档<br>如下图所示：<br><img src="/2017/01/19/web端跨域调用webapi/5.png" alt="5">   </p>
-<p>到此我们完成了几个基本的WebApi的Get方法。<br>今天我们讲的是跨域调用WebApi<br>什么是跨域呢？<br>JavaScript出于安全方面的考虑，不允许跨域调用其他页面的对象。通常来说,跨域分为以下几类：<br><img src="/2017/01/19/web端跨域调用webapi/6.png" alt="6">  </p>
-<p>在跨域问题上，域仅仅是通过“URL的首部”来识别而不会去尝试判断相同的ip地址对应着两个域或两个域是否在同一个ip上。<br>想详细了解跨域的同学可以访问：<a href="http://twlidong.github.io/blog/2013/12/22/kua-yuan-zi-yuan-gong-xiang-cross-origin-resource-sharing-cors/" target="_blank" rel="external">http://twlidong.github.io/blog/2013/12/22/kua-yuan-zi-yuan-gong-xiang-cross-origin-resource-sharing-cors/</a>  </p>
-<p>了解了跨域之后我们要开始继续往下看了。<br>web端调用api分为前端调用即（AJAX）后端调用即（.net）<br>我先从AJAX开始讲如何实现跨域<br>首先新建MVC项目，这里我就不截图了，相信大家都会的。<br>这里我们用Jquery的ajax()方法，mvc默认会帮我们引入jquery<br>我们只需要写如下代码就可以了：<br>    <script><br>        $(document).ready( function () {<br>            $.ajax({<br>                type: ‘GET’,<br>                url: ‘<a href="http://localhost:7974/api/employees/get">http://localhost:7974/api/employees/get</a>‘,<br>                dataType: ‘JSON’,<br>                success: function (data) {<br>                    alert( “姓名：” + data[0].Name + “ 性别：” + data[0].Gender + “ 住址：” + data[0].Address);<br>                }<br>            });<br>        })<br>    </script></p>
-<p>这里的url是你的api的地址映射/api/employee/get是调用get方法获取所有数据<br>为了方便演示我就把获取的数据alert出来了<br><img src="/2017/01/19/web端跨域调用webapi/7.png" alt="7">  </p>
-<p>按照我的步骤你们一定没有成功吧？<br>大家思考一下为什么会出现如下错误信息<br><img src="/2017/01/19/web端跨域调用webapi/8.png" alt="8">  </p>
-<p>在这里跟大家解释一下 Access-Control-Allow-Origin是HTML5中定义的一种服务器端返回Response header，用来解决资源（比如字体）的跨域权限问题。<br>当Access-Control-Allow-Origin后面跟URL 或 <em>，如果是 URL 则只会允许来自该 URL 的请求，</em> 则允许任何域的请求<br>例如：header(‘Access-Control-Allow-Origin:<a href="http://A.abc.com&#39;)||header(&#39;Access-Control-Allow-Origin:*" target="_blank" rel="external">http://A.abc.com&#39;)||header(&#39;Access-Control-Allow-Origin:*</a>‘)<br>意思是说只有当你请求的资源被允许跨域的时候才可以被访问。<br>那么我们该怎么设置Access-Control-Allow-Origin呢？<br>带着这个问题我么能继续我们的教程<br>为了解决跨域问题我们要自定义一个CrossSite的属性<br>在项目根目录新建一个类<br><img src="/2017/01/19/web端跨域调用webapi/9.png" alt="9">   </p>
-<pre><code>using System.Web;
-using System.Web.Http.Filters;
-using System.Web.Mvc;
-namespace APIApplication
-{
-    public class CrossSiteAttribute : System.Web.Http.Filters.ActionFilterAttribute
-    {
-        private const string Origin = &quot;Origin&quot;;
-        /// &lt;summary&gt;
-        /// Access-Control-Allow-Origin是HTML5中定义的一种服务器端返回Response header，用来解决资源（比如字体）的跨域权限问题。
-        /// &lt;/summary&gt;
-        private const string AccessControlAllowOrigin = &quot;Access-Control-Allow-Origin&quot; ;
-        /// &lt;summary&gt;
-        ///  originHeaderdefault的值可以使 URL 或 *，如果是 URL 则只会允许来自该 URL 的请求，* 则允许任何域的请求
-        /// &lt;/summary&gt;
-        private const string originHeaderdefault = &quot;http://192.168.13.7:8002&quot; ;
-        /// &lt;summary&gt;
-        /// 该方法允许api支持跨域调用
-        /// &lt;/summary&gt;
-        /// &lt;param name=&quot;actionExecutedContext&quot;&gt; 初始化 System.Web.Http.Filters.HttpActionExecutedContext 类的新实例。&lt;/param&gt;
-        public override void OnActionExecuted( HttpActionExecutedContext actionExecutedContext)
-        {
-            actionExecutedContext.Response.Headers.Add(AccessControlAllowOrigin, originHeaderdefault);
-        }
-    }
-}
-</code></pre><p>然后我们可以在EmployeesController中添加[CrossSite]属性<br>用法是这样的：</p>
-<pre><code>[CrossSite]
-public IEnumerable&lt;Employees &gt; Get(int ? id = null )
-{
-    return from employee in emps where employee.Id.Equals(id) || string.IsNullOrEmpty(Convert .ToString(id)) select employee;
-}
-</code></pre><p>然后重新生成解决方案，运行后可以看到刚才的警告框的数据了。</p>
-<p>前端的调用已经结束了，下面让我们看看后端是如何调用的吧。<br>在MVC项目里的Models里我们需要一个实体模型用来读取或设置数据<br>新建类命名为v_employees</p>
-<pre><code>public class v_employees
-{
-    public int? id { get; set; }
-    public int? departmentid { get; set; }
-    public string name { get; set; }
-    public string job { get; set; }
-    public string gender { get; set; }
-    public string phonenum { get; set; }
-    public string emailadderss { get; set; }
-    public string address { get; set; }
-}
-</code></pre><p>后端我采用的是HttpClient<br>具体用法如下：</p>
-<pre><code>private HttpClient client = new HttpClient ();
-private string url = &quot;http://192.168.13.7:8001/api/employees/get&quot; ;
-public async Task&lt; ActionResult&gt; Index()
-{
-    ViewBag.Message = &quot;Modify this template to jump-start your ASP.NET MVC application.&quot;;
-
-    var data = await client.GetAsync(url);
-    var employees = data.Content.ReadAsAsync&lt;IEnumerable &lt;v_employees &gt;&gt;();
-    List&lt; v_employees&gt; emps = employees.Result.ToList();           
-    ViewData[ &quot;employees&quot;] = emps;
-    return View();
-}
-</code></pre><p>然后在Index页面设置ViewData<br><img src="/2017/01/19/web端跨域调用webapi/10.png" alt="10"></p>
-<p>在页面里就可以直接使用数据emps了</p>
-<pre><code>@foreach ( var item in emps)
-{
-    &lt;ul &gt;
-        &lt;li &gt;@ item.name&lt;/ li&gt;
-        &lt;li &gt;@ item.gender&lt;/li &gt;
-        &lt;li &gt;@ item.address&lt;/li &gt;
-    &lt;/ul &gt;
-}
-</code></pre><p>运行后的效果如下：<br><img src="/2017/01/19/web端跨域调用webapi/11.png" alt="11"></p>
-
-          
+          跨域是指从一个域名的网页去请求另一个域名的资源。比如从http://www.baidu.com/ 页面去请求 http://www.google.com 的资源。跨域的严格一点的定义是：只要 协议，域名，端口有任何一个的不同，就被当作是跨域。
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/01/19/web端跨域调用webapi/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
